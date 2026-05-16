@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "JHHx-gR-OCUeXrkQSQ962"
+uri = "file://artifacts/skillionaires/public/images/about-1.png"
+type = "image"
+title = "Youth skill training workshop"
+
+[[generated]]
+id = "mfeUev-F6-U32kSw1zbXv"
+uri = "file://artifacts/skillionaires/public/images/about-2.png"
+type = "image"
+title = "Indian women digital literacy"
+
+[[generated]]
+id = "ozlQcT4YA7cCJHQ0TSQxb"
+uri = "file://artifacts/skillionaires/public/images/about-3.png"
+type = "image"
+title = "Technical skill training machinery"

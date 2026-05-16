@@ -1,0 +1,249 @@
+You are a senior full-stack UI/UX engineer with 30+ years of experience 
+building world-class production websites. Build a stunning, fully functional 
+Next.js 14+ (App Router) website for "Skillionaires" — an Indian NGO focused 
+on skill development, vocational training, and youth empowerment. 
+The brand is affiliated with "Indianeers Media Private Limited" 
+(tagline: "Skilling India's Future").
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 DESIGN DIRECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Aesthetic: "Bharat Futurism" — a fusion of modern geometric design 
+with subtle Indian cultural motifs. Think saffron-to-deep-navy gradient 
+energy, Ashoka Chakra-inspired radial patterns, and the dynamism of 
+New India's infrastructure ambition.
+
+Color Palette (CSS variables):
+  --primary: #FF6B00        /* Saffron energy */
+  --secondary: #0A1628      /* Deep navy authority */
+  --accent: #00C48C         /* Growth green */
+  --gold: #F5A623           /* Achievement gold */
+  --light: #F8F6F1          /* Warm parchment */
+  --text: #1A1A2E
+
+Typography:
+  - Display headings: "Syne" (Google Fonts) — geometric, confident
+  - Body: "DM Sans" — modern, readable
+  - Accent numerals/stats: "Space Mono" — technical precision
+
+Motion:
+  - Use Framer Motion for all animations
+  - Page-load: staggered hero reveal (opacity + Y translateY)
+  - Counters: animated number roll-up on scroll (Intersection Observer)
+  - Cards: tilt-on-hover with subtle shadow bloom
+  - Section transitions: diagonal clip-path wipes between sections
+  - Parallax: hero background layers at different scroll speeds
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📁 PROJECT STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/app
+  layout.tsx               → Root layout with fonts, metadata, navbar, footer
+  page.tsx                 → Home (hero + section previews)
+  /about/page.tsx          → About Us (vision, mission, objectives, principles)
+  /programs/page.tsx       → Programs (Govt, CSR, Industry, Institutional)
+  /achievements/page.tsx   → Achievements (affiliations, awards, impact stats)
+  /strategy/page.tsx       → Program Implementation Strategy
+  /work/page.tsx           → Work Experience & Special Projects
+  /coverage/page.tsx       → Geographical Coverage (interactive India map)
+  /gallery/page.tsx        → Gallery (masonry image grid)
+  /contact/page.tsx        → Contact Us (form + map embed)
+  /way-forward/page.tsx    → Vision 2047 + Sustainability
+
+/components
+  /ui
+    Navbar.tsx             → Sticky, glass-morphism, mobile hamburger
+    Footer.tsx             → Rich footer with links, social, newsletter
+    Button.tsx             → Reusable CTA button variants
+    SectionHeading.tsx     → Animated heading with saffron underline
+    StatCard.tsx           → Animated counter card
+    ProgramCard.tsx        → Hover-tilt program card
+    AchievementCard.tsx    → Award/affiliation badge card
+    TestimonialSlider.tsx  → Auto-scrolling testimonial carousel
+    IndiaMap.tsx           → SVG India map with state highlights
+    Timeline.tsx           → Vertical animated timeline component
+    GalleryGrid.tsx        → Masonry layout with lightbox
+    ContactForm.tsx        → Validated form with toast feedback
+
+/lib
+  constants.ts             → All site content (programs, stats, team data)
+  animations.ts            → Shared Framer Motion variants
+  utils.ts
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏠 HOME PAGE SECTIONS (in order)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. HERO SECTION
+   - Full-viewport height
+   - Animated particle background (canvas, saffron/navy dots)
+   - Ashoka Chakra SVG subtly rotating in background (opacity 0.06)
+   - Large bold headline: "Empowering India,  
+     One Skill at a Time"
+   - Sub-headline with typewriter effect cycling:  
+     "Youth", "Women", "Rural Communities", "Persons with Disabilities"
+   - Two CTAs: "Explore Programs" (primary) + "Our Impact" (ghost)
+   - Floating stat pills: "10,000+ Trained | 50+ Partners | 15 States"
+   - Scroll indicator (animated chevron bounce)
+
+2. IMPACT NUMBERS STRIP
+   - Dark navy band across full width
+   - 4 animated stat counters:  
+     Beneficiaries Trained | Industry Partners | States Covered | 
+     Placement Rate %
+   - Numbers roll up on scroll entry (Intersection Observer)
+
+3. ABOUT SNAPSHOT
+   - 2-column: left = bold text + Indianeers logo + brand story
+   - Right = stacked image collage with floating badge "Est. 20XX"
+   - CTA: "Read Our Story →"
+
+4. PROGRAMS GRID
+   - Section heading with saffron accent line
+   - 2×2 card grid (large cards), each with:
+     • Icon (custom SVG)
+     • Program name
+     • 2-line description
+     • Hover: card flips to show key highlights
+   - Cards: Government Programs | CSR Projects | 
+     Industry Programs | Institutional Programs
+
+5. GEOGRAPHICAL COVERAGE
+   - Interactive SVG India map
+   - Highlighted states where Skillionaires operates
+   - Tooltip on hover showing state + program details
+   - Counter below: "X States | Y Districts | Z Training Centers"
+
+6. ACHIEVEMENTS TICKER
+   - Horizontal infinite-scroll marquee of award logos/names
+   - Below: 3-column grid of key affiliation badges
+
+7. TESTIMONIALS
+   - Gradient background section
+   - Auto-sliding testimonial cards with:
+     • Quote, name, program, state
+     • Star rating
+   - Dots navigation + prev/next arrows
+
+8. VISION 2047 TEASER
+   - Full-width cinematic banner (diagonal split design)
+   - Left: bold "Our Contribution to Viksit Bharat 2047"
+   - Right: 3 key focus points in icon + text format
+   - CTA: "The Way Forward →"
+
+9. PARTNERS / CSR LOGOS
+   - Grayscale logo grid, color on hover
+   - "Trusted by India's Leading Organizations"
+
+10. CONTACT CTA BAND
+    - Saffron gradient band
+    - "Partner with Us for India's Skill Revolution"
+    - Email + WhatsApp CTA buttons
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧭 NAVBAR REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- Transparent on hero, glass-morphism (backdrop-blur) on scroll
+- Logo: Indianeers logo (PNG) left-aligned
+- Nav links: Home | About | Programs | Achievements | 
+  Coverage | Gallery | Contact
+- "Partner With Us" button (saffron, top-right)
+- Mobile: hamburger → full-screen overlay menu with staggered links
+- Active route indicator: saffron underline animated with layoutId
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚙️ TECH STACK & LIBRARIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Framework:    Next.js 14+ (App Router, TypeScript)
+Styling:      Tailwind CSS v3 (custom config for palette + fonts)
+Animation:    Framer Motion v11
+Icons:        Lucide React + custom SVGs
+Maps:         react-simple-maps (India SVG choropleth)
+Forms:        React Hook Form + Zod validation
+Toasts:       react-hot-toast
+Fonts:        next/font/google (Syne, DM Sans, Space Mono)
+Images:       next/image (all images optimized)
+Carousel:     Embla Carousel
+Lightbox:     yet-another-react-lightbox
+Linting:      ESLint + Prettier
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+♿ QUALITY STANDARDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- WCAG 2.1 AA accessibility (aria-labels, focus rings, alt text)
+- Lighthouse score target: Performance 90+, Accessibility 95+
+- Fully responsive: mobile-first (320px → 1920px)
+- SEO: generateMetadata() per page, OG tags, structured data (JSON-LD)
+- No layout shift (CLS = 0): reserve space for all dynamic content
+- Smooth scroll behavior, reduced-motion media query support
+- All external links: rel="noopener noreferrer"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔑 KEY DESIGN RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. No generic purple/white gradients — saffron, navy, green ONLY
+2. Every section must have a unique background treatment 
+   (gradient, texture, diagonal clip, image overlay)
+3. The Indianeers logo must appear in navbar and footer
+4. All program content must come from the sitemap index provided
+5. Use diagonal section dividers (SVG clip-path or skew) 
+   between alternating sections
+6. Sticky "Partner With Us" floating button on mobile (bottom-right)
+7. Footer: 4-column layout — Logo+tagline | Quick Links | 
+   Programs | Contact Info
+8. Use subtle grain texture overlay on hero (CSS noise filter)
+9. All cards must have micro-interaction on hover 
+   (transform + shadow, NOT just color change)
+10. Animate page transitions with Framer Motion's AnimatePresence
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 CONTENT PAGES — SPECIFIC REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/about       → Tabs: Summary | Vision | Mission | Objectives | 
+               Principles | Area of Concern | Strategy | 
+               Target Beneficiaries
+               Use vertical animated tab switcher (left sidebar on 
+               desktop, accordion on mobile)
+
+/programs    → 4 category cards expand into detailed sub-pages 
+               (Govt, CSR, Industry, Institutional)
+
+/achievements → Masonry grid of award cards + affiliations logos + 
+                impact infographic (animated bar/pie charts)
+
+/coverage    → Full-page India map, filterable by program type
+
+/strategy    → Vertical timeline: Training Process → Placement → 
+               Compliance
+
+/work        → Case study cards for past projects + special projects 
+               highlighted with feature callout boxes
+
+/gallery     → Masonry grid, category filter tabs, lightbox on click
+
+/contact     → Split layout: left = contact form, 
+               right = address + embedded Google Map + 
+               WhatsApp link + social icons
+
+/way-forward → Editorial magazine layout with Vision 2047 pillars + 
+               Sustainability SDG goal cards
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 DELIVERABLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Deliver the complete working Next.js project:
+- All pages, components, and config files
+- tailwind.config.ts with custom theme
+- Placeholder content matching the sitemap structure
+- README.md with setup instructions (npm install, npm run dev)
+- All animations working on first load
+- Mobile-first, fully responsive
+- Zero TypeScript errors, zero ESLint warnings
