@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import Autoplay from "embla-carousel-autoplay";
 import {
   ChevronDown, ArrowRight, BookOpen, Users, Building, Laptop,
   Star, MapPin, Award, TrendingUp, Shield, Globe
@@ -115,16 +116,21 @@ function AnimCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
 function ProgramCard({ icon: Icon, title, desc, highlights }: {
   icon: React.ElementType; title: string; desc: string; highlights: string[];
 }) {
+  const [isFlipped, setIsFlipped] = useState(false);
   return (
-    <div className="group perspective-1000 h-[280px]">
-      <div className="relative w-full h-full transition-all duration-700 preserve-3d group-hover:rotate-y-180">
+    <div
+      className="group perspective-1000 h-[280px] cursor-pointer"
+      onClick={() => setIsFlipped(!isFlipped)}
+    >
+      <div className={`relative w-full h-full transition-all duration-700 preserve-3d md:group-hover:rotate-y-180 ${isFlipped ? 'rotate-y-180' : ''}`}>
         <div className="absolute inset-0 backface-hidden bg-white p-8 rounded-2xl shadow-lg border border-border flex flex-col justify-center items-center text-center hover:shadow-xl transition-shadow">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
             <Icon className="text-primary" size={30} />
           </div>
           <h3 className="text-xl font-display font-bold text-secondary mb-2">{title}</h3>
           <p className="text-secondary/60 text-sm leading-relaxed">{desc}</p>
-          <div className="mt-4 text-xs text-primary/60 font-mono uppercase tracking-widest">Hover to explore</div>
+          <div className="mt-4 text-xs text-primary/60 font-mono uppercase tracking-widest md:hidden">Tap to explore</div>
+          <div className="mt-4 text-xs text-primary/60 font-mono uppercase tracking-widest hidden md:block">Hover to explore</div>
         </div>
         <div className="absolute inset-0 backface-hidden rotate-y-180 bg-secondary p-8 rounded-2xl shadow-lg text-white flex flex-col justify-center">
           <h3 className="text-lg font-display font-bold text-primary mb-4">{title}</h3>
@@ -149,16 +155,28 @@ const PARTNERS = ["TATA", "Infosys", "HCL", "L&T", "Mahindra", "ICICI Foundation
 const TYPEWRITER_WORDS = ["Youth", "Rural Women", "School Dropouts", "Persons with Disabilities", "Tribal Communities"];
 
 export default function Home() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 4000, stopOnInteraction: true })]);
   const [activeSlide, setActiveSlide] = useState(0);
+
+  const { scrollYProgress } = useScroll();
+  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 150]);
+  const orbY = useTransform(scrollYProgress, [0, 0.2], [0, -100]);
 
   useEffect(() => {
     if (!emblaApi) return;
     const onSelect = () => setActiveSlide(emblaApi.selectedScrollSnap());
     emblaApi.on("select", onSelect);
-    const interval = setInterval(() => emblaApi.scrollNext(), 4000);
-    return () => { emblaApi.off("select", onSelect); clearInterval(interval); };
+    return () => { emblaApi.off("select", onSelect); };
   }, [emblaApi]);
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+  const staggerItem = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -166,284 +184,162 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════
           HERO — CINEMATIC SPLIT LAYOUT
       ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-[#050D1A]">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white selection:bg-primary/20 pb-20 pt-48 md:pt-56">
 
-        {/* ── Layer 1: Gradient orbs ── */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Main saffron glow — bottom-left */}
-          <div
-            className="absolute w-[700px] h-[700px] rounded-full"
-            style={{
-              background: "radial-gradient(circle, rgba(255,107,0,0.18) 0%, transparent 70%)",
-              bottom: "-200px",
-              left: "-150px",
-            }}
-          />
-          {/* Secondary accent — top right */}
-          <div
-            className="absolute w-[500px] h-[500px] rounded-full"
-            style={{
-              background: "radial-gradient(circle, rgba(0,196,140,0.08) 0%, transparent 70%)",
-              top: "-100px",
-              right: "-50px",
-            }}
-          />
-          {/* Gold shimmer — center */}
-          <div
-            className="absolute w-[600px] h-[300px] rounded-full"
-            style={{
-              background: "radial-gradient(ellipse, rgba(245,166,35,0.06) 0%, transparent 70%)",
-              top: "30%",
-              left: "30%",
-            }}
-          />
-        </div>
+        {/* ── Layer 1: Light Animated Aurora & Glow ── */}
+        <motion.div style={{ y: orbY }} className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Subtle light base glow */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,107,0,0.04)_0%,transparent_80%)]" />
 
-        {/* ── Layer 2: Dot grid ── */}
+          {/* Animated Mesh / Aurora Effect for Light Mode */}
+          <motion.div
+            animate={{
+              rotate: [0, 5, -5, 0],
+              scale: [1, 1.05, 0.95, 1],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[50vh] bg-[radial-gradient(ellipse_at_center,rgba(255,107,0,0.08)_0%,transparent_70%)] will-change-transform"
+          />
+        </motion.div>
+
+        {/* ── Layer 2: Ultra-fine Tech Grid (Animated via Transform for Performance) ── */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-25"
+          className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden"
           style={{
-            backgroundImage: "radial-gradient(rgba(255,107,0,0.4) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            maskImage: "radial-gradient(ellipse at center, black 30%, transparent 80%)",
+            WebkitMaskImage: "radial-gradient(ellipse at center, black 30%, transparent 80%)"
           }}
-        />
-
-        {/* ── Layer 3: Ashoka Chakra (massive, behind everything) ── */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-          <AshokaChakra
-            className="text-white/[0.04] animate-[spin_90s_linear_infinite]"
-            style={{ width: "min(900px, 110vw)", height: "min(900px, 110vw)" } as React.CSSProperties}
+        >
+          <motion.div
+            animate={{ y: [0, 48] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-x-0 -top-[48px] bottom-0 will-change-transform"
+            style={{
+              backgroundImage: "linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)",
+              backgroundSize: "3rem 3rem",
+            }}
           />
         </div>
 
-
-        {/* ── Layer 5: Horizontal rule decorators ── */}
-        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-white/[0.04] to-transparent pointer-events-none" />
+        {/* ── Layer 3: Holographic Ashoka Chakra (Dark) ── */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden mix-blend-multiply opacity-50">
+          <AshokaChakra
+            className="text-black/[0.04] animate-[spin_180s_linear_infinite] will-change-transform transform-gpu"
+            style={{ width: "min(1200px, 150vw)", height: "min(1200px, 150vw)" } as React.CSSProperties}
+          />
+        </div>
 
         {/* ── CONTENT ── */}
-        <div className="relative z-10 w-full container mx-auto px-4 md:px-6 py-32">
-          <div className="grid lg:grid-cols-[1fr_420px] gap-12 xl:gap-20 items-center">
+        <motion.div style={{ y: heroY }} className="relative z-10 w-full container mx-auto px-4 md:px-6 flex flex-col items-center text-center">
 
-            {/* LEFT — Text */}
-            <div>
-              {/* Eyebrow */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8"
-              >
-                <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                <span className="text-white/70 text-sm font-mono tracking-widest uppercase">
-                  Skilling India's Future
-                </span>
-              </motion.div>
+          {/* Minimal / Futuristic Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1, delay: 0.1, ease: "easeOut" }}
+            className="text-[4rem] sm:text-6xl md:text-7xl lg:text-[6.5rem] font-sans font-extrabold text-zinc-900 leading-[1] tracking-tighter mb-8 max-w-5xl mx-auto flex flex-col items-center"
+          >
+            <span className="block mb-2 md:mb-4 bg-clip-text text-transparent bg-gradient-to-b from-zinc-950 to-zinc-600">
+              India's Youth.
+            </span>
+            <span className="flex flex-col sm:flex-row justify-center items-center gap-x-5 sm:gap-x-6 gap-y-1 mt-2">
+              <span className="text-zinc-400 font-medium cursor-default">United.</span>
+              <span className="hidden sm:inline text-zinc-200 font-light text-5xl -mt-1">/</span>
+              <span className="text-zinc-400 font-medium cursor-default">Skilled.</span>
+              <span className="hidden sm:inline text-zinc-200 font-light text-5xl -mt-1">/</span>
+              <span className="text-zinc-950 font-extrabold cursor-default">
+                Ready.
+              </span>
+            </span>
+          </motion.h1>
 
-              {/* H1 */}
-              <motion.h1
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="text-5xl md:text-6xl xl:text-7xl font-display font-bold text-white leading-[1.07] tracking-tight mb-6"
-              >
-                Empowering India,
-                <br />
-                <span
-                  className="text-transparent"
-                  style={{
-                    WebkitTextStroke: "1px rgba(255,107,0,0.4)",
-                    textShadow: "0 0 80px rgba(255,107,0,0.3)",
-                  }}
-                >
-                  One Skill
-                </span>{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-gold to-primary">
-                  at a Time
-                </span>
-              </motion.h1>
+          {/* Subheading */}
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-zinc-500 text-lg md:text-xl font-normal leading-relaxed max-w-2xl mx-auto mb-12"
+          >
+            A national interface delivering industry-aligned vocational training and next-generation placement networks.
+          </motion.p>
 
-              {/* Typewriter line */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.25 }}
-                className="text-xl md:text-2xl text-white/70 font-medium mb-3 flex items-center gap-2 flex-wrap"
-              >
-                <span>Transforming</span>
-                <TypewriterText words={TYPEWRITER_WORDS} />
-              </motion.div>
+          {/* Minimal Futuristic CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-6 mb-16"
+          >
+            <Link
+              href="/programs"
+              className="group relative inline-flex items-center gap-3 bg-[#050D1A] text-white px-8 py-3.5 rounded-sm font-semibold text-xs md:text-sm uppercase tracking-widest hover:bg-primary transition-all duration-300 overflow-hidden"
+            >
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+              <span>Explore Programs</span>
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </Link>
 
-              {/* Subheading */}
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.35 }}
-                className="text-white/50 text-base md:text-lg leading-relaxed max-w-xl mb-10"
-              >
-                An initiative by Indianeers Media Private Limited — delivering industry-aligned vocational training,
-                government scheme implementation, and placement-linked programs across 15 Indian states.
-              </motion.p>
+            <Link
+              href="/achievements"
+              className="group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-sm font-semibold text-xs md:text-sm uppercase tracking-widest text-[#050D1A]/70 border border-[#050D1A]/20 hover:border-[#050D1A]/60 hover:text-[#050D1A] hover:bg-[#050D1A]/5 transition-all duration-300"
+            >
+              <span>Our Impact</span>
+              <div className="w-1.5 h-1.5 rounded-full border border-[#050D1A]/50 group-hover:bg-[#050D1A] group-hover:scale-150 transition-all" />
+            </Link>
+          </motion.div>
 
-              {/* CTAs */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.45 }}
-                className="flex flex-wrap gap-4 mb-12"
-              >
-                <Link
-                  href="/programs"
-                  className="group relative inline-flex items-center gap-2 bg-primary text-white px-7 py-4 rounded-full font-semibold text-base overflow-hidden"
-                  style={{ boxShadow: "0 0 40px rgba(255,107,0,0.35), 0 4px 16px rgba(255,107,0,0.25)" }}
-                >
-                  <span className="relative z-10 flex items-center gap-2">
-                    Explore Programs
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </span>
-                  {/* Shimmer */}
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
-                </Link>
-                <Link
-                  href="/achievements"
-                  className="inline-flex items-center gap-2 border border-white/20 text-white/80 hover:text-white hover:border-white/40 px-7 py-4 rounded-full font-semibold text-base backdrop-blur-sm transition-all hover:bg-white/5"
-                >
-                  Our Impact
-                </Link>
-              </motion.div>
-
-              {/* Trust pills */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.55 }}
-                className="flex flex-wrap gap-3"
-              >
-                {[
-                  { color: "bg-accent", label: "10,000+ Trained" },
-                  { color: "bg-gold", label: "50+ Partners" },
-                  { color: "bg-primary", label: "15 States" },
-                  { color: "bg-white/40", label: "NSDC Empanelled" },
-                ].map((pill) => (
-                  <div
-                    key={pill.label}
-                    className="flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 px-3.5 py-1.5 rounded-full text-white/80 text-sm font-mono"
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${pill.color}`} />
-                    {pill.label}
-                  </div>
-                ))}
-              </motion.div>
+          {/* Trust lines - Ultra Minimal */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+            className="flex flex-wrap justify-center gap-8 md:gap-16 text-[#050D1A]/40 text-xs font-mono tracking-[0.15em] uppercase font-semibold mb-8"
+          >
+            <div className="flex items-center gap-3 hover:text-[#050D1A]/80 transition-colors cursor-default">
+              <span className="text-primary/70">01</span> 10,000+ Trained
             </div>
-
-            {/* RIGHT — Floating Cards */}
-            <div className="hidden lg:block relative h-[520px]">
-              {/* Card 1 — Beneficiaries */}
-              <motion.div
-                initial={{ opacity: 0, x: 40, y: -20 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute top-0 right-0 w-56 bg-white/8 backdrop-blur-xl border border-white/12 rounded-2xl p-5 shadow-2xl"
-                style={{ background: "rgba(255,255,255,0.06)" }}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
-                    <Users className="text-primary" size={18} />
-                  </div>
-                  <span className="text-white/60 text-xs font-mono uppercase tracking-widest">Trained</span>
-                </div>
-                <div className="font-mono text-3xl font-bold text-white mb-1">10,000+</div>
-                <div className="text-accent text-xs font-semibold flex items-center gap-1">
-                  <TrendingUp size={12} /> +34% this year
-                </div>
-              </motion.div>
-
-              {/* Card 2 — Placement */}
-              <motion.div
-                initial={{ opacity: 0, x: -30, y: 20 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.65 }}
-                className="absolute top-[140px] left-0 w-52 backdrop-blur-xl border border-white/12 rounded-2xl p-5 shadow-2xl"
-                style={{ background: "rgba(0,196,140,0.1)" }}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-xl bg-accent/20 flex items-center justify-center">
-                    <TrendingUp className="text-accent" size={18} />
-                  </div>
-                  <span className="text-white/60 text-xs font-mono uppercase tracking-widest">Placed</span>
-                </div>
-                <div className="font-mono text-3xl font-bold text-white mb-1">82%</div>
-                <div className="text-white/50 text-xs">vs. 65% industry avg</div>
-              </motion.div>
-
-              {/* Card 3 — States */}
-              <motion.div
-                initial={{ opacity: 0, x: 30, y: 30 }}
-                animate={{ opacity: 1, x: 0, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
-                className="absolute top-[260px] right-4 w-48 backdrop-blur-xl border border-white/12 rounded-2xl p-5 shadow-2xl"
-                style={{ background: "rgba(245,166,35,0.1)" }}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-9 h-9 rounded-xl bg-gold/20 flex items-center justify-center">
-                    <MapPin className="text-gold" size={18} />
-                  </div>
-                  <span className="text-white/60 text-xs font-mono uppercase tracking-widest">States</span>
-                </div>
-                <div className="font-mono text-3xl font-bold text-white mb-1">15</div>
-                <div className="text-white/50 text-xs">120+ training centers</div>
-              </motion.div>
-
-              {/* Card 4 — NSDC Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.95 }}
-                className="absolute bottom-16 left-6 right-6 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl"
-                style={{ background: "rgba(255,255,255,0.05)" }}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <Shield className="text-gold shrink-0" size={20} />
-                  <span className="text-white/80 text-sm font-medium">Government Certified</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {["NSDC", "MSDE", "PMKVY", "DDU-GKY"].map((badge) => (
-                    <span key={badge} className="text-xs px-2.5 py-1 bg-white/10 border border-white/10 rounded-full text-white/60 font-mono">
-                      {badge}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Decorative lines connecting cards */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 420 520">
-                <line x1="170" y1="80" x2="170" y2="180" stroke="rgba(255,107,0,0.5)" strokeWidth="1" strokeDasharray="4 6" />
-                <line x1="200" y1="210" x2="300" y2="310" stroke="rgba(0,196,140,0.5)" strokeWidth="1" strokeDasharray="4 6" />
-              </svg>
+            <div className="flex items-center gap-3 hover:text-[#050D1A]/80 transition-colors cursor-default">
+              <span className="text-primary/70">02</span> 50+ Partners
             </div>
-          </div>
-        </div>
+            <div className="flex items-center gap-3 hover:text-[#050D1A]/80 transition-colors cursor-default">
+              <span className="text-primary/70">03</span> 15 States
+            </div>
+          </motion.div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <span className="text-white/30 text-xs font-mono uppercase tracking-widest">Scroll</span>
-          <div className="w-px h-10 bg-gradient-to-b from-white/20 to-transparent animate-[pulse_2s_ease-in-out_infinite]" />
-        </div>
+          {/* Scroll indicator - integrated into flow to prevent overlap */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1 }}
+            className="flex flex-col items-center gap-3 pointer-events-none mt-4"
+          >
+            <span className="text-[#050D1A]/30 text-[0.65rem] font-mono uppercase tracking-[0.3em] font-semibold">Scroll</span>
+            <div className="w-px h-12 bg-gradient-to-b from-primary/50 to-transparent animate-[pulse_2s_ease-in-out_infinite]" />
+          </motion.div>
+
+        </motion.div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
           IMPACT NUMBERS STRIP
       ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative bg-primary py-14 overflow-hidden">
+      <section className="relative bg-orange-50 py-14 border-y border-orange-100 overflow-hidden">
         {/* Background texture */}
         <div
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: "repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0, rgba(255,255,255,0.1) 1px, transparent 0, transparent 50%)",
+            backgroundImage: "repeating-linear-gradient(45deg, #FF6B00 0, #FF6B00 1px, transparent 0, transparent 50%)",
             backgroundSize: "12px 12px",
           }}
         />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x-0 md:divide-x divide-white/20">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-y md:divide-y-0 md:divide-x divide-orange-200/60"
+          >
             {[
               { to: 10000, suffix: "+", label: "Beneficiaries Trained", icon: Users },
               { to: 50, suffix: "+", label: "Industry Partners", icon: Building },
@@ -452,18 +348,18 @@ export default function Home() {
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <div key={i} className="text-center px-4">
+                <motion.div variants={staggerItem} key={i} className="text-center px-4 pt-6 md:pt-0">
                   <div className="flex justify-center mb-2">
-                    <Icon className="text-white/40" size={20} />
+                    <Icon className="text-primary/40" size={20} />
                   </div>
-                  <h3 className="font-mono text-3xl md:text-5xl font-bold text-white mb-1">
+                  <h3 className="font-mono text-3xl md:text-5xl font-extrabold text-primary mb-1">
                     <AnimCounter to={stat.to} suffix={stat.suffix} />
                   </h3>
-                  <p className="text-white/70 font-medium text-sm uppercase tracking-wider">{stat.label}</p>
-                </div>
+                  <p className="text-primary/70 font-semibold text-xs md:text-sm uppercase tracking-wider">{stat.label}</p>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -670,17 +566,21 @@ export default function Home() {
                 ].map((dot, i) => (
                   <div
                     key={i}
-                    className="absolute flex items-center justify-center"
+                    className="absolute flex items-center justify-center group cursor-pointer"
                     style={{ top: dot.top, left: dot.left, transform: "translate(-50%, -50%)" }}
                   >
                     <div
-                      className="rounded-full bg-primary animate-pulse"
+                      className="rounded-full bg-primary animate-pulse group-hover:bg-accent transition-colors duration-300"
                       style={{ width: dot.size, height: dot.size, animationDelay: `${i * 0.2}s` }}
                     />
                     <div
-                      className="absolute rounded-full bg-primary/20"
+                      className="absolute rounded-full bg-primary/20 group-hover:bg-accent/40 transition-colors duration-300"
                       style={{ width: dot.size * 2.5, height: dot.size * 2.5 }}
                     />
+                    {/* Tooltip */}
+                    <div className="absolute top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity bg-secondary/90 text-white text-[10px] py-1 px-2 rounded pointer-events-none whitespace-nowrap border border-white/10 z-20">
+                      {dot.label}
+                    </div>
                   </div>
                 ))}
                 {/* Center label */}
@@ -878,7 +778,8 @@ export default function Home() {
       </section>
 
       {/* CSS overrides for 3D cards + animations */}
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .preserve-3d { transform-style: preserve-3d; }
