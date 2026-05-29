@@ -4,11 +4,12 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import Autoplay from "embla-carousel-autoplay";
 import {
   ChevronDown, ArrowRight, BookOpen, Users, Building, Laptop,
-  Star, MapPin, Award, TrendingUp, Shield, Globe
+  Star, MapPin, Award, TrendingUp, Shield, Globe, Check, Lightbulb, Eye, Target, ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
+import { InteractiveIndiaMap } from "@/components/InteractiveIndiaMap";
 
 // ─── Ashoka Chakra (proper 24-spoke) ───────────────────────────────────────
 function AshokaChakra({ className, style }: { className?: string; style?: React.CSSProperties }) {
@@ -113,41 +114,147 @@ function AnimCounter({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 // ─── 3D Flip Program Card ───────────────────────────────────────────────────
-function ProgramCard({ icon: Icon, title, desc, highlights }: {
-  icon: React.ElementType; title: string; desc: string; highlights: string[];
+function ProgramCard({ icon: Icon, title, desc, highlights, index }: {
+  icon: React.ElementType; title: string; desc: string; highlights: string[]; index?: number;
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
   return (
-    <div
-      className="group perspective-1000 h-[280px] cursor-pointer"
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: (index || 0) * 0.1, ease: [0.21, 0.47, 0.32, 0.98] }}
+      className="group perspective-1000 h-[320px] cursor-pointer"
       onClick={() => setIsFlipped(!isFlipped)}
     >
-      <div className={`relative w-full h-full transition-all duration-700 preserve-3d md:group-hover:rotate-y-180 ${isFlipped ? 'rotate-y-180' : ''}`}>
-        <div className="absolute inset-0 backface-hidden bg-white p-8 rounded-2xl shadow-lg border border-border flex flex-col justify-center items-center text-center hover:shadow-xl transition-shadow">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
-            <Icon className="text-primary" size={30} />
+      <div className={`relative w-full h-full transition-transform duration-700 preserve-3d md:group-hover:rotate-y-180 ${isFlipped ? 'rotate-y-180' : ''}`}>
+
+        {/* FRONT FACE */}
+        <div className="absolute inset-0 backface-hidden bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-zinc-100 flex flex-col items-start transition-all duration-500 overflow-hidden group-hover:border-orange-200/50 group-hover:shadow-[0_20px_40px_-15px_rgba(255,107,0,0.12)]">
+
+          {/* Interactive Mouse Spotlight */}
+          <div
+            className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-300 group-hover:opacity-100 z-0"
+            style={{
+              background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,107,0,0.06), transparent 40%)`,
+            }}
+          />
+
+          {/* Faint Watermark Icon */}
+          <div className="absolute -bottom-8 -right-8 opacity-[0.03] text-zinc-900 transition-transform duration-700 group-hover:scale-110 group-hover:-rotate-12 pointer-events-none z-0">
+            <Icon size={180} strokeWidth={1} />
           </div>
-          <h3 className="text-xl font-display font-bold text-secondary mb-2">{title}</h3>
-          <p className="text-secondary/60 text-sm leading-relaxed">{desc}</p>
-          <div className="mt-4 text-xs text-primary/60 font-mono uppercase tracking-widest md:hidden">Tap to explore</div>
-          <div className="mt-4 text-xs text-primary/60 font-mono uppercase tracking-widest hidden md:block">Hover to explore</div>
+
+          <div className="relative mb-6 z-10">
+            {/* Glowing orb behind icon */}
+            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-b from-orange-50 to-orange-100/50 flex items-center justify-center border border-orange-100/80 shadow-sm transition-transform duration-500 group-hover:-translate-y-1">
+              <Icon className="text-primary" size={24} strokeWidth={2.5} />
+            </div>
+          </div>
+
+          <h3 className="text-[22px] font-sans font-extrabold text-zinc-900 mb-3 tracking-tight relative z-10">{title}</h3>
+          <p className="text-zinc-500 text-[15px] leading-relaxed line-clamp-3 relative z-10 font-medium">{desc}</p>
+
+          <div className="mt-auto flex items-center gap-2 text-[13px] text-primary font-bold tracking-wide uppercase relative z-10">
+            <span className="relative after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-primary group-hover:after:w-full after:transition-all after:duration-300">Explore Program</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-300" strokeWidth={3} />
+          </div>
         </div>
-        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-secondary p-8 rounded-2xl shadow-lg text-white flex flex-col justify-center">
-          <h3 className="text-lg font-display font-bold text-primary mb-4">{title}</h3>
-          <ul className="space-y-2.5 w-full flex-1">
+
+        {/* BACK FACE */}
+        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-[#0a0f18] to-[#121b2b] p-8 rounded-3xl shadow-xl text-white flex flex-col border border-zinc-800 overflow-hidden">
+
+          {/* Subtle tech grid background */}
+          <div className="absolute inset-0 opacity-[0.03] z-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+
+          {/* Ultra-premium noise/grain texture */}
+          <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
+
+          <h3 className="text-[20px] font-sans font-extrabold text-white mb-6 flex items-center gap-3 relative z-10 tracking-tight">
+            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 border border-primary/30">
+              <Icon className="text-primary" size={16} strokeWidth={2.5} />
+            </div>
+            {title}
+          </h3>
+
+          <ul className="space-y-4 w-full flex-1 relative z-10">
             {highlights.map((h, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-white/80">
-                <ArrowRight className="text-accent shrink-0 mt-0.5" size={14} />
-                <span>{h}</span>
+              <li key={i} className="flex items-start gap-3.5 text-[14.5px] text-zinc-300 font-medium">
+                <div className="w-5 h-5 rounded-full bg-[#5cb85c]/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <Check className="text-[#5cb85c]" size={12} strokeWidth={3} />
+                </div>
+                <span className="leading-snug">{h}</span>
               </li>
             ))}
           </ul>
-          <Link href="/programs" className="mt-5 text-sm font-semibold text-accent hover:text-accent/80 transition-colors flex items-center gap-1">
-            View Details <ArrowRight size={14} />
-          </Link>
         </div>
       </div>
-    </div>
+    </motion.div>
+  );
+}
+
+// ─── Modern Dark Program Card (Reference Design) ──────────────────────────────
+function ProgramCardDark({ icon: Icon, title, desc, highlights, index }: {
+  icon: React.ElementType; title: string; desc: string; highlights: string[]; index: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.7, delay: index * 0.15, ease: [0.21, 0.47, 0.32, 0.98] }}
+      className="group relative bg-gradient-to-b from-[#060e1d] to-[#030811] rounded-3xl p-8 border border-white/5 overflow-hidden transition-all duration-700 hover:-translate-y-2 hover:border-white/10 hover:shadow-[0_30px_60px_-15px_rgba(255,107,0,0.2)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
+    >
+      {/* Decorative Glowing Orb */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full pointer-events-none transition-all duration-700 group-hover:scale-125 group-hover:bg-primary/20 opacity-40 group-hover:opacity-100" />
+
+      {/* Watermark Icon */}
+      <div className="absolute -bottom-10 -right-10 opacity-[0.02] text-white pointer-events-none transition-all duration-1000 group-hover:scale-110 group-hover:-rotate-12 group-hover:opacity-[0.05]">
+        <Icon size={180} strokeWidth={1} />
+      </div>
+
+      <div className="relative z-10">
+        {/* Icon Box */}
+        <div className="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center mb-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_0_25px_rgba(255,107,0,0.2)] group-hover:border-primary/30 group-hover:bg-primary/10">
+          <Icon className="text-zinc-300 group-hover:text-primary transition-colors duration-300" size={24} strokeWidth={2} />
+        </div>
+
+        <h3 className="text-[22px] font-sans font-bold text-white mb-4 tracking-wide group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-300 transition-all duration-300">{title}</h3>
+
+        {/* Expanding Separator Line */}
+        <div className="h-[2px] w-12 bg-gradient-to-r from-primary to-transparent mb-5 opacity-50 group-hover:opacity-100 group-hover:w-full transition-all duration-700 ease-out" />
+
+        <p className="text-zinc-400 text-[15px] leading-relaxed font-medium mb-8 group-hover:text-zinc-300 transition-colors duration-500">
+          {desc}
+        </p>
+
+        <ul className="space-y-3">
+          {highlights.slice(0, 2).map((h, i) => (
+            <li key={i} className="flex items-start gap-3 text-[14px] text-zinc-500 font-medium group-hover:text-zinc-400 transition-colors duration-500">
+              <div className="mt-[3px] rounded-full bg-primary/10 p-[3px] group-hover:bg-primary/20 transition-colors duration-300">
+                <ArrowRight className="text-primary shrink-0 opacity-80" size={10} strokeWidth={3} />
+              </div>
+              <span className="leading-snug">{h}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </motion.div>
   );
 }
 
@@ -157,10 +264,12 @@ const TYPEWRITER_WORDS = ["Youth", "Rural Women", "School Dropouts", "Persons wi
 export default function Home() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 4000, stopOnInteraction: true })]);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [aboutTab, setAboutTab] = useState<"story" | "mission" | "vision">("story");
 
   const { scrollYProgress } = useScroll();
   const heroY = useTransform(scrollYProgress, [0, 0.2], [0, 150]);
   const orbY = useTransform(scrollYProgress, [0, 0.2], [0, -100]);
+  const chakraRotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -222,11 +331,16 @@ export default function Home() {
         </div>
 
         {/* ── Layer 3: Holographic Ashoka Chakra (Dark) ── */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden mix-blend-multiply opacity-50">
-          <AshokaChakra
-            className="text-black/[0.04] animate-[spin_180s_linear_infinite] will-change-transform transform-gpu"
-            style={{ width: "min(1200px, 150vw)", height: "min(1200px, 150vw)" } as React.CSSProperties}
-          />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none mix-blend-multiply opacity-50">
+          <motion.div
+            style={{ rotate: chakraRotate }}
+            className="will-change-transform flex items-center justify-center"
+          >
+            <AshokaChakra
+              className="text-black/[0.04] transform-gpu"
+              style={{ width: "min(1200px, 150vw)", height: "min(1200px, 150vw)" } as React.CSSProperties}
+            />
+          </motion.div>
         </div>
 
         {/* ── CONTENT ── */}
@@ -364,94 +478,209 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          ABOUT SNAPSHOT
+          ABOUT SNAPSHOT (Redesigned)
       ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-light overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+      <section className="py-24 bg-white overflow-hidden relative">
+        <div className="container mx-auto px-4 relative z-10">
+
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center mb-8">
+
+            {/* Left Column: Logo */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
+              className="lg:col-span-4 xl:col-span-5 flex items-center justify-center lg:justify-end"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 text-primary font-mono font-bold text-xs rounded-full mb-6 border border-primary/20 uppercase tracking-widest">
-                <Award size={14} /> Est. 2020
-              </div>
-              <h2 className="text-4xl md:text-5xl font-display font-bold text-secondary mb-6 leading-tight">
-                Who We Are
-              </h2>
-              <p className="text-lg text-secondary/70 mb-6 leading-relaxed">
-                Skillionaires, an initiative by <strong className="text-secondary">Indianeers Media Private Limited</strong>,
-                bridges the skill gap in India by delivering placement-linked vocational training, government scheme
-                implementation, and community-based empowerment programs.
-              </p>
-              <p className="text-base text-secondary/60 mb-8 leading-relaxed">
-                We believe that empowering youth with practical, industry-relevant skills is the foundation of a
-                resilient, self-reliant India — aligned with the national vision of Viksit Bharat 2047.
-              </p>
-              <div className="mb-8">
-                <img src="/indianeers-logo.png" alt="Indianeers Media" className="h-10 object-contain" />
-              </div>
-              <Link
-                href="/about"
-                className="group inline-flex items-center gap-2 bg-secondary text-white px-6 py-3.5 rounded-full font-semibold hover:bg-secondary/90 transition-colors"
-              >
-                Read Our Story
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <img
+                src="/indianeers-logo-full.png"
+                alt="Indianeers Media Private Limited"
+                className="w-full max-w-[320px] md:max-w-md object-contain"
+              />
             </motion.div>
 
+            {/* Right Column: Content & Tabs */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="relative flex items-center justify-center"
+              className="lg:col-span-8 xl:col-span-7 flex flex-col"
             >
-              <img
-                src="/indianeers-logo-full.png"
-                alt="Indianeers Media Private Limited"
-                className="w-full object-contain"
-              />
+              <p className="text-primary font-mono text-sm uppercase tracking-widest mb-3">
+                About Us
+              </p>
+
+              <h2 className="text-4xl md:text-5xl font-sans font-extrabold text-[#050D1A] mb-6 tracking-tight">
+                Who We Are
+              </h2>
+
+              <p className="text-lg text-zinc-600 mb-8 leading-relaxed max-w-3xl">
+                <strong className="text-zinc-900 font-semibold">Indianeers Media Private Limited (IMPL)</strong> is a youth-centric skilling and development company committed to empowering individuals from all walks of life—especially those from underserved communities. Incorporated in 2013, Indianeers has grown into a trusted implementation partner for central and state government skill development initiatives across India.
+              </p>
+
+              {/* Tabs Container */}
+              <div className="rounded-xl border border-zinc-100 p-2 md:p-3 overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)] max-w-4xl">
+
+                {/* Tab Navigation */}
+                <div className="grid grid-cols-3 bg-zinc-100/60 rounded-lg overflow-hidden">
+                  {(["story", "mission", "vision"] as const).map((tab) => {
+                    const icons = { story: Lightbulb, mission: Eye, vision: Target };
+                    const Icon = icons[tab];
+                    return (
+                      <button
+                        key={tab}
+                        onClick={() => setAboutTab(tab)}
+                        className={`flex items-center justify-center gap-2 py-3 px-3 text-sm font-medium transition-all duration-300 ${aboutTab === tab
+                          ? "bg-[#4a4a4a] text-white shadow-sm"
+                          : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-200/50"
+                          }`}
+                      >
+                        <Icon size={16} />
+                        <span className="capitalize">{tab}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Tab Content */}
+                <div className="px-5 py-6 min-h-[140px] flex items-center">
+                  {aboutTab === "story" && (
+                    <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-zinc-500 text-[15px] leading-relaxed space-y-4">
+                      <p>Founded in 2012, Indianeers began with a vision to bridge skill gaps and empower youth. We have grown into a key partner for government and corporate skilling initiatives, transforming lives across India.</p>
+                      <p>Today, we impact thousands through diverse programs like PMKVY, SANKALP, and international job readiness.</p>
+                    </motion.div>
+                  )}
+                  {aboutTab === "mission" && (
+                    <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-zinc-500 text-[15px] leading-relaxed space-y-4">
+                      <p>To deliver quality, industry-aligned skill training programs that create meaningful employment pathways for underserved communities across India — with measurable impact, full compliance, and compassionate execution.</p>
+                    </motion.div>
+                  )}
+                  {aboutTab === "vision" && (
+                    <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-zinc-500 text-[15px] leading-relaxed space-y-4">
+                      <p>"To be India's most trusted partner in creating a skilled, self-reliant, and globally competitive workforce — one community at a time."</p>
+                    </motion.div>
+                  )}
+                </div>
+
+              </div>
             </motion.div>
+
           </div>
+
+          {/* Bottom Features Grid */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid md:grid-cols-3 gap-0 bg-white rounded-xl border border-zinc-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]"
+          >
+            {[
+              { title: "Industry-Aligned Training", desc: "Our programs meet NSQF and industry standards, ensuring nationwide recognition." },
+              { title: "Expert Trainers", desc: "Learn from professionals with deep expertise in diverse sectors." },
+              { title: "Nationwide Reach", desc: "Training accessible across 23 states, impacting diverse communities." }
+            ].map((feature, i) => (
+              <div key={i} className={`flex gap-4 items-start p-6 md:p-8 ${i < 2 ? 'md:border-r border-zinc-100' : ''}`}>
+                <div className="w-8 h-8 rounded-full bg-[#5cb85c] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                  <Check size={18} strokeWidth={3} />
+                </div>
+                <div>
+                  <h4 className="font-sans font-bold text-black text-[16px] md:text-[17px] mb-2">{feature.title}</h4>
+                  <p className="text-zinc-600 text-[13px] md:text-[14px] leading-relaxed pr-2 md:pr-4">{feature.desc}</p>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          PROGRAMS GRID (3D Flip Cards)
+          PROGRAMS GRID (Masonry Staggered Layout)
       ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-white relative" style={{ clipPath: "polygon(0 0, 100% 4vw, 100% 100%, 0 calc(100% - 4vw))" }}>
-        <div className="container mx-auto px-4 py-12">
-          <div className="text-center mb-14">
-            <p className="text-primary font-mono text-sm uppercase tracking-widest mb-3">What We Do</p>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-secondary mb-4">
-              Our Programs
-            </h2>
-            <p className="text-secondary/60 max-w-xl mx-auto">
-              Four pillars of skill development — hover each card to explore
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <ProgramCard icon={Building} title="Government Programs"
-              desc="End-to-end implementation of PMKVY, DDU-GKY, NULM and other central and state schemes."
-              highlights={["PMKVY 3.0 Implementation", "DDU-GKY Rural Training", "NULM Urban Livelihoods", "PM Vishwakarma Yojana"]} />
-            <ProgramCard icon={Users} title="CSR Projects"
-              desc="Partnering with India's leading corporations for community-based skill development."
-              highlights={["Women Digital Empowerment", "Tribal Community Skilling", "Disability Inclusion", "Rural Livelihoods"]} />
-            <ProgramCard icon={Laptop} title="Industry Programs"
-              desc="Employer-led training with committed placement — highest placement rates in the ecosystem."
-              highlights={["Apprenticeship Programs", "Sector-Specific Training", "Campus-to-Corporate", "Upskilling & Reskilling"]} />
-            <ProgramCard icon={BookOpen} title="Institutional Programs"
-              desc="Embedding vocational skills within schools, colleges, and ITIs across India."
-              highlights={["NSQF School Skill Labs", "College Skill Centers", "ITI Strengthening", "Polytechnic Integration"]} />
-          </div>
-          <div className="text-center mt-12">
-            <Link href="/programs"
-              className="inline-flex items-center gap-2 border border-secondary/20 text-secondary px-6 py-3 rounded-full font-semibold hover:bg-secondary hover:text-white transition-all">
-              View All Programs <ArrowRight size={16} />
-            </Link>
+      <section className="py-32 bg-white relative overflow-hidden">
+        {/* Premium Top Border Glow */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent z-20" />
+        <div className="absolute top-0 inset-x-0 h-[2px] w-1/2 mx-auto bg-gradient-to-r from-transparent via-primary/30 to-transparent blur-[2px] z-20" />
+
+        {/* Top Fade Gradient (Dim to Light) */}
+        <div className="absolute top-0 inset-x-0 h-48 bg-gradient-to-b from-zinc-50 to-transparent pointer-events-none z-10" />
+
+        {/* Background Grid Pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#000000 1px, transparent 1px), linear-gradient(90deg, #000000 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+
+        {/* Bottom Fade Gradient (Light to Dim) */}
+        <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-zinc-50 to-transparent pointer-events-none z-10" />
+
+        {/* Premium Bottom Border */}
+        <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-zinc-200 to-transparent z-20" />
+
+        <div className="container mx-auto px-4 relative z-10 max-w-7xl">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+
+            {/* Left Content Column */}
+            <div className="lg:col-span-5 lg:sticky lg:top-32 self-start">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+              >
+                {/* Pill */}
+                <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-orange-100 bg-orange-50/80 mb-6">
+                  <div className="w-2 h-2 rounded-full bg-primary" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-primary mt-[1px]">What We Do</span>
+                </div>
+
+                <h2 className="text-4xl md:text-5xl lg:text-[56px] font-sans font-extrabold text-[#050D1A] mb-8 tracking-[-0.02em] leading-[1.05]">
+                  Our Programs
+                </h2>
+
+                <div className="border-l-[4px] border-primary pl-6 mb-12 py-1">
+                  <p className="text-[19px] text-zinc-600 leading-[1.7] font-medium max-w-[420px]">
+                    Four pillars of skill development designed to empower youth, transform communities, and build a globally competitive workforce.
+                  </p>
+                </div>
+
+                <Link href="/programs" className="group inline-flex items-center gap-4 bg-[#050D1A] border border-[#050D1A] text-white p-2 pr-8 rounded-full font-semibold hover:bg-primary hover:border-primary transition-all duration-300 shadow-xl hover:shadow-primary/20">
+                  <div className="w-11 h-11 rounded-full bg-white text-black flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-95">
+                    <ArrowRight size={20} strokeWidth={2.5} />
+                  </div>
+                  <span className="text-[16px] tracking-wide">View All Programs</span>
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* Right Staggered Grid Column */}
+            <div className="lg:col-span-7 relative">
+              <div className="grid md:grid-cols-2 gap-6 items-start">
+
+                {/* Column 1 */}
+                <div className="flex flex-col gap-6 relative z-10">
+                  <ProgramCardDark index={0} icon={Building} title="Government Programs"
+                    desc="End-to-end implementation of PMKVY, DDU-GKY, NULM and other central and state schemes."
+                    highlights={["PMKVY 3.0 Implementation", "DDU-GKY Rural Training", "NULM Urban Livelihoods", "PM Vishwakarma Yojana"]} />
+
+                  <ProgramCardDark index={1} icon={Users} title="CSR Projects"
+                    desc="Partnering with India's leading corporations for community-based skill development."
+                    highlights={["Women Digital Empowerment", "Tribal Community Skilling", "Disability Inclusion", "Rural Livelihoods"]} />
+                </div>
+
+                {/* Column 2 (Staggered Down) */}
+                <div className="flex flex-col gap-6 md:mt-20 relative z-10">
+                  <ProgramCardDark index={2} icon={Laptop} title="Industry Programs"
+                    desc="Employer-led training with committed placement — highest placement rates in the ecosystem."
+                    highlights={["Apprenticeship Programs", "Sector-Specific Training", "Campus-to-Corporate", "Upskilling & Reskilling"]} />
+
+                  <ProgramCardDark index={3} icon={BookOpen} title="Institutional Programs"
+                    desc="Embedding vocational skills within schools, colleges, and ITIs across India."
+                    highlights={["NSQF School Skill Labs", "College Skill Centers", "ITI Strengthening", "Polytechnic Integration"]} />
+                </div>
+
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -485,112 +714,66 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          GEOGRAPHICAL COVERAGE
+          GEOGRAPHICAL COVERAGE 
       ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-secondary text-white relative overflow-hidden">
+      <section className="py-24 bg-slate-50 text-slate-900 relative overflow-hidden border-t border-slate-200">
         <div
-          className="absolute inset-0 opacity-5"
+          className="absolute inset-0 opacity-10"
           style={{
-            backgroundImage: "radial-gradient(rgba(255,107,0,0.8) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
           }}
         />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-24 lg:gap-32 items-center">
             <motion.div
               initial={{ opacity: 0, x: -24 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
             >
-              <p className="text-primary font-mono text-sm uppercase tracking-widest mb-3">Where We Work</p>
-              <h2 className="text-4xl md:text-5xl font-display font-bold mb-5">Pan-India Presence</h2>
-              <p className="text-white/60 text-lg mb-10 leading-relaxed">
+              <p className="text-secondary font-mono text-sm uppercase tracking-widest mb-3">Where We Work</p>
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-5 text-secondary">Pan-India Presence</h2>
+              <p className="text-slate-600 text-lg mb-10 leading-relaxed">
                 With a robust network spanning 15 states and 45+ districts, Skillionaires brings quality
                 vocational training to both urban centers and deep rural pockets of India.
               </p>
               <div className="grid grid-cols-2 gap-4 mb-10">
                 {[
-                  { icon: MapPin, value: "15", label: "Active States", color: "text-primary", bg: "bg-primary/10" },
-                  { icon: Building, value: "120+", label: "Training Centers", color: "text-accent", bg: "bg-accent/10" },
-                  { icon: Users, value: "45+", label: "Districts Covered", color: "text-gold", bg: "bg-gold/10" },
-                  { icon: Award, value: "10K+", label: "Beneficiaries", color: "text-white", bg: "bg-white/10" },
+                  { icon: MapPin, value: "15", label: "Active States", color: "text-blue-600", bg: "bg-blue-50" },
+                  { icon: Building, value: "120+", label: "Training Centers", color: "text-teal-600", bg: "bg-teal-50" },
+                  { icon: Users, value: "45+", label: "Districts Covered", color: "text-indigo-600", bg: "bg-indigo-50" },
+                  { icon: Award, value: "10K+", label: "Beneficiaries", color: "text-rose-600", bg: "bg-rose-50" },
                 ].map((item, i) => {
                   const Icon = item.icon;
                   return (
-                    <div key={i} className={`flex items-center gap-4 ${item.bg} p-4 rounded-xl border border-white/10`}>
-                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                    <div key={i} className={`flex items-center gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md`}>
+                      <div className={`w-10 h-10 rounded-lg ${item.bg} flex items-center justify-center shrink-0`}>
                         <Icon className={item.color} size={20} />
                       </div>
                       <div>
                         <div className={`font-mono text-2xl font-bold ${item.color}`}>{item.value}</div>
-                        <div className="text-white/50 text-xs">{item.label}</div>
+                        <div className="text-slate-500 text-xs font-medium">{item.label}</div>
                       </div>
                     </div>
                   );
                 })}
               </div>
               <Link href="/coverage"
-                className="inline-flex items-center gap-2 bg-white text-secondary px-6 py-3 rounded-full font-semibold hover:bg-white/90 transition-colors">
+                className="inline-flex items-center gap-2 bg-secondary text-white px-6 py-3 rounded-full font-semibold hover:bg-secondary/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
                 View Full Coverage Map <ArrowRight size={16} />
               </Link>
             </motion.div>
 
-            {/* Schematic map */}
+            {/* Interactive SVG India Map */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative"
+              className="relative w-full flex justify-center"
             >
-              <div className="relative aspect-square max-w-sm mx-auto">
-                <div className="absolute inset-0 rounded-full bg-white/5 border border-white/10" />
-                <div className="absolute inset-4 rounded-full border border-primary/20" />
-                <div className="absolute inset-8 rounded-full border border-white/5" />
-                {/* State dots */}
-                {[
-                  { top: "18%", left: "38%", size: 10, label: "Punjab" },
-                  { top: "22%", left: "45%", size: 12, label: "Delhi" },
-                  { top: "30%", left: "32%", size: 14, label: "Rajasthan" },
-                  { top: "30%", left: "55%", size: 16, label: "UP" },
-                  { top: "32%", left: "70%", size: 12, label: "Bihar" },
-                  { top: "40%", left: "75%", size: 12, label: "W.Bengal" },
-                  { top: "42%", left: "45%", size: 16, label: "MP" },
-                  { top: "40%", left: "25%", size: 14, label: "Gujarat" },
-                  { top: "52%", left: "40%", size: 18, label: "MH" },
-                  { top: "52%", left: "68%", size: 12, label: "Odisha" },
-                  { top: "63%", left: "48%", size: 14, label: "Telangana" },
-                  { top: "68%", left: "42%", size: 14, label: "Karnataka" },
-                  { top: "73%", left: "52%", size: 12, label: "TN" },
-                ].map((dot, i) => (
-                  <div
-                    key={i}
-                    className="absolute flex items-center justify-center group cursor-pointer"
-                    style={{ top: dot.top, left: dot.left, transform: "translate(-50%, -50%)" }}
-                  >
-                    <div
-                      className="rounded-full bg-primary animate-pulse group-hover:bg-accent transition-colors duration-300"
-                      style={{ width: dot.size, height: dot.size, animationDelay: `${i * 0.2}s` }}
-                    />
-                    <div
-                      className="absolute rounded-full bg-primary/20 group-hover:bg-accent/40 transition-colors duration-300"
-                      style={{ width: dot.size * 2.5, height: dot.size * 2.5 }}
-                    />
-                    {/* Tooltip */}
-                    <div className="absolute top-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity bg-secondary/90 text-white text-[10px] py-1 px-2 rounded pointer-events-none whitespace-nowrap border border-white/10 z-20">
-                      {dot.label}
-                    </div>
-                  </div>
-                ))}
-                {/* Center label */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center bg-secondary/80 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
-                    <div className="font-mono text-3xl font-bold text-primary">15</div>
-                    <div className="text-white/60 text-sm mt-0.5">Active States</div>
-                  </div>
-                </div>
-              </div>
+              <InteractiveIndiaMap />
             </motion.div>
           </div>
         </div>
@@ -599,15 +782,49 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════
           TESTIMONIALS
       ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-light">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-14">
-            <p className="text-primary font-mono text-sm uppercase tracking-widest mb-3">Success Stories</p>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-secondary">Voices of Impact</h2>
+      <section className="py-32 bg-[#0A162B] relative overflow-hidden">
+        {/* Background Accents */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="absolute -left-40 top-40 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute -right-40 bottom-10 w-[400px] h-[400px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
+        
+        {/* Abstract Grid Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+          style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
+        />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-[1px] bg-primary" />
+                <span className="text-primary font-mono text-sm uppercase tracking-widest">Success Stories</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl lg:text-[56px] font-display font-bold text-white tracking-tight">
+                Voices of <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">Impact</span>
+              </h2>
+            </div>
+            
+            {/* Custom Carousel Navigation */}
+            <div className="flex gap-3 hidden md:flex">
+              <button 
+                onClick={() => emblaApi?.scrollPrev()}
+                className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:scale-105 transition-all duration-300 backdrop-blur-sm"
+              >
+                <ChevronRight className="rotate-180" size={20} />
+              </button>
+              <button 
+                onClick={() => emblaApi?.scrollNext()}
+                className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white hover:bg-blue-600 hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
           </div>
 
-          <div className="max-w-3xl mx-auto overflow-hidden" ref={emblaRef}>
-            <div className="flex">
+          <div className="overflow-hidden -mx-4 px-4 py-8" ref={emblaRef}>
+            <div className="flex gap-6">
               {[
                 {
                   name: "Rahul Sharma",
@@ -628,32 +845,53 @@ export default function Home() {
                   quote: "Practical, hands-on training that actually matches what the industry needs. The placement support was excellent — I had 3 job offers before I even finished.",
                 },
               ].map((test, idx) => (
-                <div key={idx} className="flex-[0_0_100%] min-w-0 px-2">
-                  <div className="bg-white p-10 md:p-12 rounded-3xl shadow-xl border border-border text-center">
-                    <div className="flex justify-center gap-1 mb-6 text-gold">
-                      {[...Array(5)].map((_, i) => <Star key={i} size={18} fill="currentColor" />)}
+                <div key={idx} className="flex-[0_0_100%] md:flex-[0_0_60%] lg:flex-[0_0_45%] min-w-0">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: idx * 0.1 }}
+                    className="relative bg-white/[0.03] backdrop-blur-md p-10 md:p-12 rounded-[32px] border border-white/10 group hover:-translate-y-2 hover:bg-white/[0.05] hover:border-primary/40 transition-all duration-500 h-full flex flex-col justify-between"
+                  >
+                    {/* Massive Background Quote Icon */}
+                    <div className="absolute top-6 right-8 text-white/[0.04] font-serif text-[120px] leading-none pointer-events-none group-hover:text-primary/10 transition-colors duration-500">
+                      "
                     </div>
-                    <p className="text-xl md:text-2xl text-secondary/80 font-medium italic mb-8 leading-relaxed max-w-2xl mx-auto">
-                      "{test.quote}"
-                    </p>
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-                      <span className="font-display font-bold text-primary text-lg">{test.name[0]}</span>
+
+                    <div>
+                      <div className="flex gap-1 mb-8 text-amber-400 drop-shadow-sm">
+                        {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                      </div>
+                      
+                      <p className="text-xl md:text-[22px] text-zinc-300 font-medium leading-relaxed mb-10 relative z-10">
+                        "{test.quote}"
+                      </p>
                     </div>
-                    <h4 className="text-lg font-bold text-secondary">{test.name}</h4>
-                    <p className="text-primary text-sm font-medium mt-0.5">{test.prog} · {test.state}</p>
-                  </div>
+
+                    <div className="flex items-center gap-4 border-t border-white/10 pt-6 mt-auto">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg">
+                        <span className="font-display font-bold text-white text-xl">{test.name[0]}</span>
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-white tracking-wide">{test.name}</h4>
+                        <p className="text-zinc-400 text-sm font-medium mt-1">
+                          <span className="text-primary">{test.prog}</span> • {test.state}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Dot indicators */}
-          <div className="flex justify-center gap-2 mt-6">
+          {/* Mobile Dot indicators */}
+          <div className="flex justify-center gap-3 mt-8 md:hidden">
             {[0, 1, 2].map((i) => (
               <button
                 key={i}
                 onClick={() => emblaApi?.scrollTo(i)}
-                className={`rounded-full transition-all ${activeSlide === i ? "w-6 h-2 bg-primary" : "w-2 h-2 bg-border"}`}
+                className={`rounded-full transition-all duration-300 ${activeSlide === i ? "w-8 h-2 bg-primary shadow-[0_0_10px_rgba(37,99,235,0.5)]" : "w-2 h-2 bg-white/20 hover:bg-white/40"}`}
               />
             ))}
           </div>

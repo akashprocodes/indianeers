@@ -172,9 +172,8 @@ export default function Programs() {
                   key={p.id}
                   onClick={() => setActive(p.id)}
                   data-testid={`program-tab-${p.id}`}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                    active === p.id ? "bg-secondary text-white" : "text-secondary/60 hover:text-secondary hover:bg-light"
-                  }`}
+                  className={`flex items-center gap-2 px-5 py-3 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${active === p.id ? "bg-secondary text-white" : "text-secondary/60 hover:text-secondary hover:bg-light"
+                    }`}
                 >
                   <PIcon size={16} />
                   {p.title}
