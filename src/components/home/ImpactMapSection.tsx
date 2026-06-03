@@ -25,15 +25,15 @@ export function ImpactMapSection() {
             <p className="text-secondary font-mono text-sm uppercase tracking-widest mb-3">Where We Work</p>
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-5 text-secondary">Pan-India Presence</h2>
             <p className="text-slate-600 text-lg mb-10 leading-relaxed">
-              With a robust network spanning 15 states and 45+ districts, Skillionaires brings quality
+              With a robust network spanning 25 states and 45+ districts, Skillionaires brings quality
               vocational training to both urban centers and deep rural pockets of India.
             </p>
             <div className="grid grid-cols-2 gap-4 mb-10">
               {[
-                { icon: MapPin, value: "15", label: "Active States", color: "text-blue-600", bg: "bg-blue-50" },
+                { icon: MapPin, value: "25", label: "Active States", color: "text-blue-600", bg: "bg-blue-50" },
                 { icon: Building, value: "120+", label: "Training Centers", color: "text-teal-600", bg: "bg-teal-50" },
                 { icon: Users, value: "45+", label: "Districts Covered", color: "text-indigo-600", bg: "bg-indigo-50" },
-                { icon: Award, value: "10K+", label: "Beneficiaries", color: "text-rose-600", bg: "bg-rose-50" },
+                { icon: Award, value: "76K+", label: "Beneficiaries", color: "text-rose-600", bg: "bg-rose-50" },
               ].map((item, i) => {
                 const Icon = item.icon;
                 return (

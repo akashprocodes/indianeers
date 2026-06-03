@@ -169,13 +169,13 @@ export function HeroSection() {
           className="flex flex-wrap justify-center gap-8 md:gap-16 text-[#050D1A]/40 text-xs font-mono tracking-[0.15em] uppercase font-semibold mb-8"
         >
           <div className="flex items-center gap-3 hover:text-[#050D1A]/80 transition-colors cursor-default">
-            <span className="text-primary/70">01</span> 10,000+ Trained
+            <span className="text-primary/70">01</span> 76,000+ Trained
           </div>
           <div className="flex items-center gap-3 hover:text-[#050D1A]/80 transition-colors cursor-default">
-            <span className="text-primary/70">02</span> 50+ Partners
+            <span className="text-primary/70">02</span> 100+ Partners
           </div>
           <div className="flex items-center gap-3 hover:text-[#050D1A]/80 transition-colors cursor-default">
-            <span className="text-primary/70">03</span> 15 States
+            <span className="text-primary/70">03</span> 25 States
           </div>
         </motion.div>
 

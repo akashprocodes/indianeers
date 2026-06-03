@@ -54,10 +54,10 @@ export function StatsSection() {
           className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-y md:divide-y-0 md:divide-x divide-orange-200/60"
         >
           {[
-            { to: 10000, suffix: "+", label: "Beneficiaries Trained", icon: Users },
-            { to: 50, suffix: "+", label: "Industry Partners", icon: Building },
-            { to: 15, suffix: "", label: "States Covered", icon: Globe },
-            { to: 82, suffix: "%", label: "Placement Rate", icon: TrendingUp },
+            { to: 76000, suffix: "+", label: "Beneficiaries Trained", icon: Users },
+            { to: 100, suffix: "+", label: "Industry Partners", icon: Building },
+            { to: 25, suffix: "", label: "States Covered", icon: Globe },
+            { to: 95, suffix: "%", label: "Placement Rate", icon: TrendingUp },
           ].map((stat, i) => {
             const Icon = stat.icon;
             return (
