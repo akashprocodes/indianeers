@@ -87,7 +87,7 @@ const getColorClasses = (color: string) => {
 
 export function CourseJobSection() {
   return (
-    <section className="py-24 bg-[#FAFAFA] relative overflow-hidden">
+    <section className="pt-24 pb-12 bg-zinc-50 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10 max-w-7xl">
         
         {/* Single Main Header */}

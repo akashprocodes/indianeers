@@ -5,6 +5,7 @@ import { ProgramsSection } from "@/components/home/ProgramsSection";
 import { AffiliationsSection } from "@/components/home/AffiliationsSection";
 import { ProjectHighlightsSection } from "@/components/home/ProjectHighlightsSection";
 import { CourseJobSection } from "@/components/home/CourseJobSection";
+import { TenderSection } from "@/components/home/TenderSection";
 import { ImpactMapSection } from "@/components/home/ImpactMapSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { VisionSection } from "@/components/home/VisionSection";
@@ -20,6 +21,7 @@ export default function Home() {
       <AffiliationsSection />
       <ProjectHighlightsSection />
       <CourseJobSection />
+      <TenderSection />
       <ImpactMapSection />
       <TestimonialsSection />
       <VisionSection />
