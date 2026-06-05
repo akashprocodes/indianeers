@@ -2,12 +2,13 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { ProgramsSection } from "@/components/home/ProgramsSection";
+import { AffiliationsSection } from "@/components/home/AffiliationsSection";
+import { ProjectHighlightsSection } from "@/components/home/ProjectHighlightsSection";
 import { ImpactMapSection } from "@/components/home/ImpactMapSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { VisionSection } from "@/components/home/VisionSection";
 import { PartnersSection } from "@/components/home/PartnersSection";
-import { ContactCtaSection, TickerSection } from "@/components/home/RemainingSections";
-
+import { ContactCtaSection } from "@/components/home/RemainingSections";
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
@@ -15,7 +16,8 @@ export default function Home() {
       <StatsSection />
       <AboutSection />
       <ProgramsSection />
-      <TickerSection />
+      <AffiliationsSection />
+      <ProjectHighlightsSection />
       <ImpactMapSection />
       <TestimonialsSection />
       <VisionSection />

@@ -42,31 +42,3 @@ export function ContactCtaSection() {
   );
 }
 
-export function TickerSection() {
-  return (
-    <section className="py-10 bg-secondary border-y border-white/10 overflow-hidden">
-      <div className="flex whitespace-nowrap animate-[marquee_25s_linear_infinite]">
-        {[...Array(2)].map((_, i) => (
-          <div key={i} className="flex items-center gap-8 px-4 text-base font-display font-bold text-white/30 uppercase tracking-widest">
-            <span className="text-primary">✦</span>
-            <span>NSDC Partner</span>
-            <span className="text-primary">✦</span>
-            <span>MSDE Certified</span>
-            <span className="text-primary">✦</span>
-            <span>ISO 9001:2015</span>
-            <span className="text-primary">✦</span>
-            <span>Skill India Mission</span>
-            <span className="text-primary">✦</span>
-            <span>CSR Excellence 2023</span>
-            <span className="text-primary">✦</span>
-            <span>FICCI Skill Champion</span>
-            <span className="text-primary">✦</span>
-            <span>State Skill Mission Partner</span>
-            <span className="text-primary">✦</span>
-            <span>Best DDU-GKY Partner</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
