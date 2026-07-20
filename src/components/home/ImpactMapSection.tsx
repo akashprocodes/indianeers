@@ -6,7 +6,7 @@ import { InteractiveIndiaMap } from "@/components/InteractiveIndiaMap";
 
 export function ImpactMapSection() {
   return (
-    <section className="py-24 bg-slate-50 text-slate-900 relative overflow-hidden border-t border-slate-200">
+    <section className="pt-24 pb-12 bg-slate-50 text-slate-900 relative overflow-hidden border-t border-slate-200">
       <div
         className="absolute inset-0 opacity-10"
         style={{

@@ -158,23 +158,21 @@ export function ProjectHighlightsSection() {
         <div className="relative group">
 
           {/* Scroll Buttons */}
-          <div className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-6 z-20 transition-opacity duration-300">
+          <div className={`absolute top-1/2 -translate-y-1/2 -left-4 md:-left-6 z-20 transition-all duration-300 ${canScrollLeft ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 pointer-events-none'}`}>
             <button
               onClick={() => scroll("left")}
-              disabled={!canScrollLeft}
-              className={`w-12 h-12 rounded-full flex items-center justify-center bg-white shadow-[0_4px_20px_rgb(0,0,0,0.1)] border border-zinc-100 transition-all ${canScrollLeft ? 'text-blue-600 hover:bg-blue-50 cursor-pointer' : 'text-zinc-300 opacity-50 cursor-not-allowed'}`}
+              className="w-14 h-14 rounded-full flex items-center justify-center bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-100 text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white hover:scale-110 hover:shadow-[0_10px_40px_rgb(37,99,235,0.4)] cursor-pointer"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={28} strokeWidth={2.5} />
             </button>
           </div>
 
-          <div className="absolute top-1/2 -translate-y-1/2 -right-4 md:-right-6 z-20 transition-opacity duration-300">
+          <div className={`absolute top-1/2 -translate-y-1/2 -right-4 md:-right-6 z-20 transition-all duration-300 ${canScrollRight ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'}`}>
             <button
               onClick={() => scroll("right")}
-              disabled={!canScrollRight}
-              className={`w-12 h-12 rounded-full flex items-center justify-center bg-white shadow-[0_4px_20px_rgb(0,0,0,0.1)] border border-zinc-100 transition-all ${canScrollRight ? 'text-blue-600 hover:bg-blue-50 cursor-pointer' : 'text-zinc-300 opacity-50 cursor-not-allowed'}`}
+              className="w-14 h-14 rounded-full flex items-center justify-center bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-zinc-100 text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white hover:scale-110 hover:shadow-[0_10px_40px_rgb(37,99,235,0.4)] cursor-pointer"
             >
-              <ChevronRight size={24} />
+              <ChevronRight size={28} strokeWidth={2.5} />
             </button>
           </div>
 
@@ -182,7 +180,7 @@ export function ProjectHighlightsSection() {
           <div
             ref={scrollContainerRef}
             onScroll={checkScroll}
-            className="flex gap-6 overflow-x-auto hide-scrollbar scroll-smooth snap-x snap-mandatory py-8 px-4 -mx-4"
+            className="flex items-stretch gap-6 overflow-x-auto hide-scrollbar scroll-smooth snap-x snap-mandatory py-8 px-4 -mx-4"
           >
             {projects.map((project, idx) => (
               <motion.div
@@ -191,10 +189,10 @@ export function ProjectHighlightsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="snap-start shrink-0 w-[280px] md:w-[320px] bg-white rounded-2xl border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
+                className="snap-start shrink-0 w-[280px] md:w-[320px] min-h-[420px] bg-white rounded-2xl border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden transition-all duration-300 flex flex-col p-3 md:p-4"
               >
                 {/* Image */}
-                <div className="h-48 w-full relative overflow-hidden bg-zinc-100">
+                <div className="h-48 w-full relative overflow-hidden bg-zinc-100 rounded-xl">
                   <img
                     src={project.image}
                     alt={project.title}
@@ -203,7 +201,7 @@ export function ProjectHighlightsSection() {
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex flex-col flex-grow">
+                <div className="pt-5 pb-2 px-2 flex flex-col flex-grow">
                   <h3 className={`text-xl font-bold mb-2 ${project.color}`}>
                     {project.title}
                   </h3>

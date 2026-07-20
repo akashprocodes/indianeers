@@ -7,10 +7,13 @@ import { ProjectHighlightsSection } from "@/components/home/ProjectHighlightsSec
 import { CourseJobSection } from "@/components/home/CourseJobSection";
 import { TenderSection } from "@/components/home/TenderSection";
 import { ImpactMapSection } from "@/components/home/ImpactMapSection";
+import { GallerySection } from "@/components/home/GallerySection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
+import { BlogSection } from "@/components/home/BlogSection";
 import { VisionSection } from "@/components/home/VisionSection";
 import { PartnersSection } from "@/components/home/PartnersSection";
 import { ContactCtaSection } from "@/components/home/RemainingSections";
+
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
@@ -23,7 +26,9 @@ export default function Home() {
       <CourseJobSection />
       <TenderSection />
       <ImpactMapSection />
+      <GallerySection />
       <TestimonialsSection />
+      <BlogSection />
       <VisionSection />
       <PartnersSection />
       <ContactCtaSection />
