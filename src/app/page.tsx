@@ -10,9 +10,6 @@ import { ImpactMapSection } from "@/components/home/ImpactMapSection";
 import { GallerySection } from "@/components/home/GallerySection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { BlogSection } from "@/components/home/BlogSection";
-import { VisionSection } from "@/components/home/VisionSection";
-import { PartnersSection } from "@/components/home/PartnersSection";
-import { ContactCtaSection } from "@/components/home/RemainingSections";
 
 export default function Home() {
   return (
@@ -29,9 +26,6 @@ export default function Home() {
       <GallerySection />
       <TestimonialsSection />
       <BlogSection />
-      <VisionSection />
-      <PartnersSection />
-      <ContactCtaSection />
       
       {/* CSS overrides for 3D cards + animations */}
       <style dangerouslySetInnerHTML={{
